@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User Profiles
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Listening Lessons
+    match /lessons/{lessonId} {
+      allow read: if true;
+      allow write: if request.auth != null; // Teachers can create & edit lessons
+    }
+
+    // Real-Time Live Sessions
+    match /liveSessions/{sessionId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update: if true; // Allows teacher controls and student joining/response submission
+      allow delete: if request.auth != null;
+    }
+
+    // Homework Submissions
+    match /homeworkSubmissions/{submissionId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}
